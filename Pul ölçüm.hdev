@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.1" halcon_version="17.12">
+<procedure name="main">
+<interface/>
+<body>
+<l>read_image (Pul, 'F:/Visiomex/Pul.png')</l>
+<l>get_image_size (Pul, Width, Height)</l>
+<l>dev_open_window_fit_image (Pul, 0, 0, Width, Height, WindowID)</l>
+<l>set_display_font (WindowID, 12, 'Courier', 'true', 'false')</l>
+<l>dev_set_draw ('margin')</l>
+<l>dev_set_line_width (3)</l>
+<c></c>
+<l>dev_display (Pul)</l>
+<l>set_display_font (WindowID, 12, 'Courier', 'true', 'false')</l>
+<l>disp_continue_message (WindowID, 'black', 'true')</l>
+<l>stop ()</l>
+<c></c>
+<l>Row :=63.2646</l>
+<l>Column := 231.649</l>
+<l>Length1 := 48.0893</l>
+<l>Length2 := 14.7744</l>
+<l>Angle := rad(-90.7825)</l>
+<c></c>
+<c></c>
+<l>gen_rectangle2 (ROI_0, 63.2646, 231.649, rad(-90.7825), 48.0893, 14.7744)</l>
+<l>gen_measure_rectangle2 (Row, Column, Angle, Length1, Length2, Width, Height, 'bilinear', MeasureHandle)</l>
+<c></c>
+<c></c>
+<c></c>
+<l>disp_continue_message (WindowID, 'black', 'true')</l>
+<l>stop ()</l>
+<c></c>
+<l>measure_pairs (Pul, MeasureHandle, 1.5, 15, 'all', 'all', RowEdgeFirst, ColumnEdgeFirst, AmplitudeFirst, RowEdgeSecond, ColumnEdgeSecond, AmplitudeSecond, IntraDistance, InterDistance)</l>
+<c></c>
+<l>disp_continue_message (WindowID, 'black', 'true')</l>
+<l>stop ()</l>
+<c></c>
+<l>edges_sub_pix (Pul, Edges, 'canny', 10, 20, 40)</l>
+<l>select_contours_xld (Edges, SelectedContours, 'contour_length', 0.5, 200, -0.5, 0.5)</l>
+<l>union_adjacent_contours_xld (SelectedContours, UnionContours, 1, 1, 'attr_keep')</l>
+<c></c>
+<l>for i := 0 to |RowEdgeFirst|-1 by 1</l>
+<c>    </c>
+<l>     row1:= [sin(Angle+rad(90))*Length2+RowEdgeFirst[i], sin(Angle-rad(90))*Length2+RowEdgeFirst[i]]</l>
+<l>    column1:=[-cos(Angle+rad(90))*Length2+ColumnEdgeFirst[i], -cos(Angle-rad(90))*Length2+ColumnEdgeFirst[i]]</l>
+<c>    </c>
+<l>  row2:=[sin(Angle+rad(90))*Length2+RowEdgeSecond[i], sin(Angle-rad(90))*Length2+RowEdgeSecond[i]]</l>
+<l>    column2:=[-cos(Angle+rad(90))*Length2+ColumnEdgeSecond[i], -cos(Angle-rad(90))*Length2+ColumnEdgeSecond[i]]</l>
+<c>    </c>
+<l>    gen_contour_polygon_xld (EdgeFirst, row1, column1)</l>
+<l>    gen_contour_polygon_xld (EdgeSecond, row2, column2)</l>
+<c>    </c>
+<l>    dev_set_color ('cyan')</l>
+<l>    dev_display (EdgeFirst)</l>
+<l>    dev_set_color ('magenta')</l>
+<l>    dev_display (EdgeSecond)</l>
+<l>    dev_set_color ('blue')</l>
+<c>    </c>
+<l>    dev_set_color ('red')</l>
+<l>    if (i = 0)</l>
+<l>        set_tposition (200000, RowEdgeFirst[i] + 5, ColumnEdgeFirst[i]+20)</l>
+<l>    else</l>
+<l>        set_tposition (200000, RowEdgeFirst[i] - 40, ColumnEdgeFirst[i]+20)</l>
+<l>    endif</l>
+<l>    write_string (200000, 'width: '+IntraDistance[i]+' pix')</l>
+<c>    </c>
+<l>endfor</l>
+<c></c>
+<l>disp_continue_message (WindowID, 'black', 'true')</l>
+<l>stop ()</l>
+<c>    </c>
+<c></c>
+<l>close_measure (MeasureHandle)</l>
+<l>dev_update_window ('on')</l>
+<l>dev_clear_window ()</l>
+<c></c>
+<c></c>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>
